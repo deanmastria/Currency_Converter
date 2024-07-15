@@ -1,40 +1,78 @@
 const express = require('express');
-const path = require('path');
 const bodyParser = require('body-parser');
-const db = require('./database'); // Import the database
+const { Sequelize, DataTypes } = require('sequelize');
+const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const port = process.env.PORT || 3000;
 
+// Set up the database
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: './database.sqlite'
+});
+
+const FavoritePair = sequelize.define('FavoritePair', {
+  baseCurrency: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  targetCurrency: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+}, {
+  indexes: [
+    {
+      unique: true,
+      fields: ['baseCurrency', 'targetCurrency']
+    }
+  ]
+});
+
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.json()); // To parse JSON bodies
 
-// Serve the main HTML file
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// Create the database table
+sequelize.sync();
+
+// API to get favorite pairs
+app.get('/api/favorites', async (req, res) => {
+  const favorites = await FavoritePair.findAll();
+  res.json(favorites);
 });
 
-// API endpoint to save a favorite currency pair
-app.post('/api/favorites', (req, res) => {
+// API to add a favorite pair
+app.post('/api/favorites', async (req, res) => {
+  try {
     const { baseCurrency, targetCurrency } = req.body;
-    db.run("INSERT INTO favorites (base_currency, target_currency) VALUES (?, ?)", [baseCurrency, targetCurrency], function(err) {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json({ id: this.lastID });
-    });
+    const favorite = await FavoritePair.create({ baseCurrency, targetCurrency });
+    res.json(favorite);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-// API endpoint to get all favorite currency pairs
-app.get('/api/favorites', (req, res) => {
-    db.all("SELECT * FROM favorites", [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(rows);
+// API to delete a favorite pair
+app.delete('/api/favorites', async (req, res) => {
+  try {
+    const { baseCurrency, targetCurrency } = req.body;
+    const result = await FavoritePair.destroy({
+      where: {
+        baseCurrency,
+        targetCurrency
+      }
     });
+    if (result) {
+      res.json({ message: 'Favorite pair deleted' });
+    } else {
+      res.status(404).json({ error: 'Favorite pair not found' });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
