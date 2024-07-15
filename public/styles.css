@@ -1,10 +1,36 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    background: linear-gradient(45deg, #b4d4a1, #3be69f, #62e4e4);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .card {
     border: none;
+    background: rgba(0, 0, 0, 0.75); /* Semi-transparent background */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    margin-top: 50px;
+    margin-bottom: 100px;
 }
 
 #historical-rates-container p {
@@ -31,3 +57,12 @@ body {
 .favorite-pair .btn-danger {
     margin-left: 10px;
 }
+
+.form-control-sm {
+    font-size: 0.875rem;
+}
+
+.input-group-text {
+    font-size: 0.875rem;
+}
+

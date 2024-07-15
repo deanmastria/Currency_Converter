@@ -10,36 +10,36 @@
 <body>
     <div class="container mt-5">
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <h2 class="card-title text-center">Currency Converter</h2>
                         <div class="form-group">
                             <label for="base-currency">Base Currency:</label>
-                            <select id="base-currency" class="form-control"></select>
+                            <select id="base-currency" class="form-control form-control-sm"></select>
                         </div>
                         <div class="form-group">
                             <label for="amount">Amount:</label>
                             <div class="input-group">
-                                <input type="number" id="amount" class="form-control" value="1" min="0">
+                                <input type="number" id="amount" class="form-control form-control-sm" value="0.00" min="0" step="0.01">
                                 <div class="input-group-append">
-                                    <span class="input-group-text">Units</span>
+                                    <span id="base-currency-label" class="input-group-text"></span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <label for="target-currency">Target Currency:</label>
-                            <select id="target-currency" class="form-control"></select>
+                            <select id="target-currency" class="form-control form-control-sm"></select>
                         </div>
                         <p>Converted Amount: <span id="converted-amount" class="font-weight-bold"></span></p>
-                        <button id="convert-button" class="btn btn-primary btn-block">Convert</button>
+                        <button id="convert-button" class="btn btn-primary btn-block btn-sm">Convert</button>
                         <div class="form-group mt-3">
                             <label for="historical-date">Select Date:</label>
-                            <input type="date" id="historical-date" class="form-control">
+                            <input type="date" id="historical-date" class="form-control form-control-sm">
                         </div>
-                        <button id="fetch-historical-rate" class="btn btn-info btn-block">Fetch Historical Rate</button>
+                        <button id="fetch-historical-rate" class="btn btn-info btn-block btn-sm">Fetch Historical Rate</button>
                         <div id="historical-rate-result" class="mt-3"></div>
-                        <button id="save-favorite" class="btn btn-success btn-block mt-2">Save Favorite</button>
+                        <button id="save-favorite" class="btn btn-success btn-block btn-sm mt-2">Save Favorite</button>
                         <div id="favorite-currency-pairs" class="mt-3"></div>
                         <div id="favorite-pair-results" class="mt-3"></div>
                         <div id="error-message" class="alert alert-danger mt-3" style="display: none;"></div>

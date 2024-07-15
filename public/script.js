@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const favoriteCurrencyPairsDiv = document.getElementById('favorite-currency-pairs');
     const favoritePairResultsDiv = document.getElementById('favorite-pair-results');
     const errorMessageDiv = document.getElementById('error-message');
+    const baseCurrencyLabel = document.getElementById('base-currency-label');
 
     const API_KEY = 'fca_live_gXiYefY9djhZ1w0JC1C28pE1YzeKtQXJYRQw2PuF'; // Replace with your API key
     const API_URL = `https://api.freecurrencyapi.com/v1/latest?apikey=${API_KEY}`;
@@ -57,12 +58,24 @@ document.addEventListener('DOMContentLoaded', () => {
             baseCurrencySelect.appendChild(option1);
             targetCurrencySelect.appendChild(option2);
         });
+
+        // Update the base currency label to the first selected option
+        updateBaseCurrencyLabel();
+    }
+
+    function updateBaseCurrencyLabel() {
+        baseCurrencyLabel.textContent = baseCurrencySelect.value;
+    }
+
+    function formatAmountInput() {
+        const value = parseFloat(amountInput.value).toFixed(2);
+        amountInput.value = isNaN(value) ? '0.00' : value;
     }
 
     async function convertCurrency() {
         const baseCurrency = baseCurrencySelect.value;
         const targetCurrency = targetCurrencySelect.value;
-        const amount = parseFloat(amountInput.value);
+        const amount = parseFloat(amountInput.value).toFixed(2); // Ensure amount has two decimal places
 
         if (!baseCurrency || !targetCurrency) {
             displayErrorMessage('Please select both base and target currencies.');
@@ -86,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const data = await response.json();
             const rate = data.data[targetCurrency];
-            const convertedAmount = (amount * rate).toFixed(2);
+            const convertedAmount = (amount * rate).toFixed(2); // Ensure converted amount has two decimal places
             convertedAmountSpan.textContent = `${convertedAmount} ${targetCurrency}`;
             clearErrorMessage();
         } catch (error) {
@@ -263,9 +276,12 @@ document.addEventListener('DOMContentLoaded', () => {
         errorMessageDiv.style.display = 'none';
     }
 
+    baseCurrencySelect.addEventListener('change', updateBaseCurrencyLabel);
     document.getElementById('convert-button').addEventListener('click', convertCurrency);
     fetchHistoricalRateButton.addEventListener('click', fetchHistoricalRate); // Fetch specific historical rate for selected date
     saveFavoriteButton.addEventListener('click', saveFavoritePair);
+    amountInput.addEventListener('change', formatAmountInput);
+    amountInput.addEventListener('blur', formatAmountInput);
 
     fetchCurrencies();
     loadFavoritePairs();
